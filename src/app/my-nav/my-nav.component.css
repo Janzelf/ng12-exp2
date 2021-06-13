@@ -1,0 +1,12 @@
+.sidenav-container {
+  height: 100%;
+}
+
+.sidenav {
+  width: 100px;
+  box-shadow: 3px 0 6px rgba(0,0,0,.24);
+}
+
+.sidenav-content {
+  max-width: 800px;
+}

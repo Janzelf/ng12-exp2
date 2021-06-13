@@ -1,0 +1,114 @@
+
+<mat-card>
+    <mat-card-header>
+        <h4>{{ toernooinaam }}</h4>
+    </mat-card-header>
+<div *ngIf="isResultaat" >
+  <mat-card>
+    <h4>Incasso bestand aangemaakt</h4>
+    Het batch bestand is gemaild met instructies voor on-line invoer naar de penningmeester!
+    <div *ngIf="!isProef">
+      <br>Het aantal klaar staande transacties = {{aantalTransacties}}.
+    </div>
+    <br><small>NB In de mail: klik met de rechter muisknop op de link voor een juiste download!</small>
+    <p>Nieuw: het bestand is zelf ook hier te downloaden <a href='https://www.toernooiklapper.nl/inc-ng1/{{fname}}' download>bestand</a>
+    </p>
+  </mat-card>
+</div>
+<div *ngIf="fout">
+  <mat-card>
+    <h4>Er is iets fout gegeaan!</h4>
+    {{fout}}
+  </mat-card>
+</div>
+<form (ngSubmit)="onSubmit()" [formGroup]="incassoform">
+  <div formGroupName="gegevens">
+<mat-form-field appearance='legacy' class='full-width'>
+  <mat-label>Tenaamstelling incassant</mat-label>
+  <input matInput  placeholder="" formControlName="incassant">
+</mat-form-field>
+<br>
+<mat-form-field appearance='legacy' class='full-width'>
+    <mat-label>Incassanten rekening nummer (IBAN)</mat-label>
+    <input class="showupper" matInput required formControlName="rekeningnr">
+  <mat-error *ngIf="incassoform.get('gegevens.rekeningnr')?.hasError('pattern') && !incassoform.get('gegevens.rekeningnr')?.hasError('required')">
+    Geen geldig IBAN nummer!
+  </mat-error>
+  <mat-error *ngIf="incassoform.get('gegevens.rekeningnr')?.hasError('ibanInvalid')">
+    😢 Geen geldig IBAN nummer (typefout?)
+  </mat-error>
+  <mat-error *ngIf="incassoform.get('gegevens.rekeningnr')?.hasError('required')">
+    Rekening nummer is <strong>verplicht</strong>
+  </mat-error>
+</mat-form-field>
+<br>
+<mat-form-field appearance='legacy' class='full-width'>
+    <mat-label>Incassanten id</mat-label>
+    <input class="showupper" matInput required formControlName="incid">
+    <mat-error *ngIf="incassoform.get('gegevens.incid')?.hasError('pattern') && !incassoform.get('gegevens.incid')?.hasError('required')">
+      Geen geldig incassanten id!
+    </mat-error>
+    <mat-error *ngIf="incassoform.get('gegevens.incid')?.hasError('required')">
+      Incassanten id is <strong>verplicht</strong>
+    </mat-error>
+  </mat-form-field>
+<br>
+
+<mat-form-field appearance='legacy' class='full-width'>
+    <mat-label>Mailadres penningmeester</mat-label>
+    <input matInput formControlName="pemail" >
+  <mat-error *ngIf="incassoform.get('gegevens.pemail')?.hasError('email') && !incassoform.get('gegevens.pemail')?.hasError('required')">
+    Geen geldig email addres!
+  </mat-error>
+  <mat-error *ngIf="incassoform.get('gegevens.pemail')?.hasError('required')">
+    Mailadres is <strong>verplicht</strong>
+  </mat-error>
+</mat-form-field>
+<br>
+<small><mat-checkbox formControlName="herhaalbaar">Doorlopende incasso (zie help).</mat-checkbox></small>
+<br><br>
+</div>
+<div *ngIf="!isProef && aantalTransacties === 0" >
+  <mat-card>
+    Geen transacties.
+    <span class="kleur" ><br>Alleen proefincasso mogelijk!</span>
+  </mat-card>
+</div>
+<div *ngIf="!isProef && aantalTransacties > 0" >
+  <mat-card>
+    {{aantalTransacties}} transacties, totaalbedrag €{{totaalbedrag}}.
+  </mat-card>
+</div>
+<div *ngIf="isProef" formGroupName="proefgegevens">
+  <mat-card>
+    <h4>In - als proef - 1 € van de volgende account:</h4>
+    <mat-form-field appearance='legacy' class='full-width'>
+        <mat-label>Naam proefaccount</mat-label>
+        <input matInput formControlName="proefaccount" >
+      <mat-error *ngIf="incassoform.get('proefgegevens.proefaccount')!.hasError('required')">
+        Naam <strong>verplicht</strong>
+      </mat-error>
+  </mat-form-field>
+  <br>
+  <mat-form-field appearance='legacy' class='full-width'>
+      <mat-label>Proefaccount (IBAN)</mat-label>
+      <input class="showupper" matInput formControlName="rekeningnrt">
+    <mat-error *ngIf="incassoform.get('proefgegevens.rekeningnrt')?.hasError('pattern') && !incassoform.get('proefgegevens.rekeningnrt')?.hasError('required')">
+      Voer een geldig IBAN nummer in!
+    </mat-error>
+    <mat-error *ngIf="incassoform.get('proefgegevens.rekeningnrt')?.hasError('ibanInvalid')">
+      😢 Geen geldig IBAN nummer (typefout?)
+    </mat-error>
+  </mat-form-field>
+</mat-card>
+</div>
+<mat-card-actions>
+<button mat-raised-button [disabled]="isProef ? incassoform.invalid : incassoform.get('gegevens')?.invalid || aantalTransacties == 0" color="primary" type="submit">Maak aan</button>
+
+</mat-card-actions>
+</form>
+</mat-card>
+
+
+
+
